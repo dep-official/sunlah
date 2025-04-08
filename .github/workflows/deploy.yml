@@ -78,12 +78,18 @@ jobs:
           port: 21098
           script: |
             cd /home/woorapqt/apps/sunlah.com
+            
+            # node_modules 삭제 후 재설치
+            rm -rf node_modules
+            
+            # pnpm 전역 설치 확인
             if ! command -v pnpm &> /dev/null; then
               npm install -g pnpm
             fi
-            pnpm install
-            if pm2 show sunlah > /dev/null; then
-              pm2 reload ecosystem.config.js
-            else
-              pm2 start ecosystem.config.js
-            fi 
+            
+            # 의존성 설치
+            pnpm install --prod
+            
+            # PM2 프로세스 제거 후 재시작
+            pm2 delete sunlah || true
+            pm2 start ecosystem.config.js 
