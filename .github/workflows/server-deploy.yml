@@ -1,0 +1,84 @@
+name: Deploy Server
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'client/server/**'  # server 디렉토리의 변경사항이 있을 때만 실행
+      - 'client/server.js'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Check server file changes
+        id: changed-files
+        run: |
+          # 서버 관련 파일의 변경 확인
+          CHANGED_FILES=$(git diff --name-only HEAD^ HEAD | grep -E "^client/server/|^client/server.js$" || true)
+          if [ ! -z "$CHANGED_FILES" ]; then
+            echo "Server files changed. Deploying..."
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "files=$CHANGED_FILES" >> $GITHUB_OUTPUT
+          else
+            echo "No server files changed. Skipping deployment."
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Deploy server files
+        if: steps.changed-files.outputs.changed == 'true'
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          port: 21098
+          source: "client/server/,client/server.js"
+          target: "/home/woorapqt/apps/sunlah.com"
+          strip_components: 1
+          overwrite: true
+
+      - name: Restart Server
+        if: steps.changed-files.outputs.changed == 'true'
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          port: 21098
+          script: |
+            cd /home/woorapqt/apps/sunlah.com
+            
+            # 기존 서버 프로세스 종료
+            if pgrep -f "node server.js" > /dev/null; then
+              echo "Stopping existing server..."
+              pkill -f "node server.js"
+              sleep 2
+            fi
+
+            # 서버 의존성 설치 확인
+            if [ ! -d "node_modules" ] || [ "package.json" -nt "node_modules" ]; then
+              echo "Installing dependencies..."
+              pnpm install --prod
+            fi
+
+            # 서버 시작
+            echo "Starting server..."
+            NODE_ENV=production nohup node server.js > server.log 2>&1 &
+            
+            # 서버 시작 확인
+            sleep 5
+            if pgrep -f "node server.js" > /dev/null; then
+              echo "Server started successfully!"
+            else
+              echo "Server failed to start. Check server.log for details."
+              exit 1
+            fi
+
+            # 최근 로그 확인
+            echo "Recent server logs:"
+            tail -n 20 server.log 
