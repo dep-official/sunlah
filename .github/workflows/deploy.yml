@@ -77,7 +77,7 @@ jobs:
           password: ${{ secrets.VPS_PASSWORD }}
           port: 21098
           script: |
-            cd /apps/sunlah.com
+            cd /home/woorapqt/apps/sunlah.com
             if ! command -v pnpm &> /dev/null; then
               npm install -g pnpm
             fi
