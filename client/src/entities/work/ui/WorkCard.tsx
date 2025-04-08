@@ -22,7 +22,7 @@ export function WorkCard({ work }: WorkCardProps) {
             alt={work.title}
             width={600}
             height={400}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className="w-full h-full object-cover aspect-square transition-transform duration-500 group-hover:scale-105"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             priority={false}
             quality={85}

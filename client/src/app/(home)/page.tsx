@@ -1,13 +1,12 @@
 'use client';
 
-import { Header } from '@/widgets';
-import { EventList } from '@/features/events';
+import { works } from '@/shared/data/works';
+import { WorkList } from '@/widgets/work-list';
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-white p-8 font-nicholas">
-      <Header />
-      <EventList />
+    <div className="bg-white font-nicholas">
+      <WorkList works={works}></WorkList>
     </div>
   );
 } 

@@ -10,12 +10,13 @@ export function Header() {
 
   return (
     <>
-      <header className="flex justify-between items-center mb-20">
-        <p className="text-2xl"><Link href="/"><Image src="/logo.svg" alt="Sun Lah" width={100} height={100} /></Link></p>
-        <ul className="hidden lg:flex flex-row gap-8 items-center text-xl">
-          <li><Link href="/works">WORKS</Link></li>
-          <li><Link href="/cv">CV</Link></li>
-        </ul>
+      <header className="flex justify-between items-start mb-20">
+        <p className="text-2xl"><Link href="/"><Image src="/logo.svg" alt="Sun Lah" width={72} height={72} /></Link></p>
+        <div className="text-sm hidden lg:flex gap-2 font-verdana">
+         <button>Kor</button>
+          <span>/</span>
+          <button>Eng</button>
+        </div>
         <button 
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           className="text-lg block lg:hidden"
@@ -23,6 +24,13 @@ export function Header() {
           MENU
         </button>
       </header>
+
+      <nav className='font-verdana'>
+          <ul className='flex gap-4 flex-col'>
+            <li ><Link href={''} className='text-base font-bold italic'>Images</Link></li>
+            <li ><Link href={'/cv'} className='text-base'>CV</Link></li>
+          </ul>
+      </nav>
 
       {/* 모바일 메뉴 */}
       {isMenuOpen && (
@@ -36,8 +44,8 @@ export function Header() {
             </button>
           </div>
           <ul className="mt-20 space-y-4 text-xl">
-            <li><Link href="/works">WORKS</Link></li>
-            <li><Link href="/cv">CV</Link></li>
+            <li><Link href="">WORKS</Link></li>
+            <li><Link href="">CV</Link></li>
           </ul>
         </nav>
       )}

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import dynamic from 'next/dynamic';
+import { Header } from "@/widgets";
 
 export const metadata: Metadata = {
   title: "Sun Lah",
@@ -25,8 +26,11 @@ export default function RootLayout({
       <head>
         <link rel="stylesheet" href="https://use.typekit.net/sfe3gei.css" />
       </head>
-      <body className="font-nicholas">
-        {children}
+      <body className="container mx-auto lg:mt-20">
+        <Header />
+        <div className="pt-40">
+         {children}
+        </div>
       </body>
     </html>
   );

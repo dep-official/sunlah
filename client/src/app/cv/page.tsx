@@ -19,23 +19,25 @@ export default function CV() {
   ];
 
   return (
-    <div className="min-h-screen bg-white p-8 font-nicholas">
-      <Header />
-      
-      <main className="max-w-3xl mx-auto">
+      <main>
         <section className="mb-16">
-          <h2 className="text-2xl mb-8">
-            라선영<br/>
-          Sun Lah</h2>
+          <h2 className="text-2xl font-normal leading-[2]">
+            라선영</h2>
+            <p className='text-lg font-normal font-verdana'>Sun Lah</p>
         </section>
 
         <section className="mb-16">
-          <h3 className="text-xl mb-6">ARTIST STATEMENT</h3>
+          <ul>
+            <li>2011  영국왕립미술대학 조소과 석사
+    <li>
+    2006  이화여자대학교 조소과 학사</li>  
+          </li>
+          </ul>
           <div className="space-y-4 text-lg">
             <p>
-              The fact that seven billion people live in this world means that seven billion versions of the universe coexist. 
-              Every individual exists in their own world—one that can never truly be shared. 
-              Out of the desire to be understood and to connect, language, culture, and society were born.
+            2011  영국왕립미술대학 조소과 석사
+2006  이화여자대학교 조소과 학사
+
             </p>
             <p>
               Because we must protect ourselves and the groups we belong to, humans instinctively resist what is different. 
@@ -53,7 +55,7 @@ export default function CV() {
         </section>
 
         <section className="mb-16">
-          <h3 className="text-xl mb-6">EDUCATION</h3>
+          <h3 className="mb-6 text-xl">EDUCATION</h3>
           <div className="space-y-2">
             <p><span className="inline-block w-14">2013</span> Royal College of Art, MA Sculpture</p>
             <p><span className="inline-block w-14">2010</span> Ewha Womens University, MFA Sculpture</p>
@@ -61,15 +63,15 @@ export default function CV() {
         </section>
 
         <section className="mb-16">
-          <h3 className="text-xl mb-6">ON EXHIBITION</h3>
+          <h3 className="mb-6 text-xl">ON EXHIBITION</h3>
           <div className="space-y-6">
             {currentExhibitions.map((exhibition, index) => (
               <div key={index} className="group">
                 <Link 
                   href={exhibition.link}
-                  className="block group-hover:opacity-70 transition-opacity"
+                  className="block transition-opacity group-hover:opacity-70"
                 >
-                  <p className="text-lg link-underline inline-block">
+                  <p className="inline-block text-lg link-underline">
                     {exhibition.title}
                   </p>
                   <p className="text-base text-gray-600">
@@ -84,10 +86,10 @@ export default function CV() {
      
 
         <section className="mb-16">
-          <h3 className="text-xl mb-6">EXHIBITIONS</h3>
+          <h3 className="mb-6 text-xl">EXHIBITIONS</h3>
           <div className="space-y-8">
             <div>
-              <h4 className="text-lg mb-4">Solo Exhibitions</h4>
+              <h4 className="mb-4 text-lg">Solo Exhibitions</h4>
               <div className="space-y-2">
                 <p><span className="inline-block w-14">2021</span> 'Skin and Flesh', Gallery MARK, Seoul, Korea</p>
                 <p><span className="inline-block w-14">2017</span> 'Humans', Gallery MARK, Seoul, Korea</p>
@@ -98,7 +100,7 @@ export default function CV() {
             </div>
 
             <div>
-              <h4 className="text-lg mb-4">Selected Group Exhibitions</h4>
+              <h4 className="mb-4 text-lg">Selected Group Exhibitions</h4>
               <div className="space-y-2">
                 <p><span className="inline-block w-14">2024</span> 7 Billion Project, Seoul Museum of Art, Seoul, KR</p>
                 <p><span className="inline-block w-14">2022</span> 'Mimesis Art Project 5', Mimesis Art Museum, Paju, Korea</p>
@@ -123,6 +125,5 @@ export default function CV() {
           </div>
         </section>
       </main>
-    </div>
   );
 }

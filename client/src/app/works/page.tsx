@@ -8,6 +8,16 @@ export default function Works() {
   return (
     <div className="min-h-screen bg-white p-8 font-nicholas">
       <Header />
+      <section>
+        <div>
+          <p>Images</p>
+          <span>CV</span>
+        </div>
+        <div>
+          <p>7 Billion Project</p>
+          <span>And more</span>
+        </div>
+      </section>
       <main className="max-w-7xl mx-auto mt-16 relative">
         <WorkList works={works} />
       </main>
