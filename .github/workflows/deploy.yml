@@ -47,101 +47,19 @@ jobs:
           cd client
           pnpm build
 
-      - name: Delete remote .next directory
-        uses: appleboy/ssh-action@v0.1.6
-        with:
-          host: ${{ secrets.VPS_IP }}
-          username: ${{ secrets.VPS_USERNAME }}
-          password: ${{ secrets.VPS_PASSWORD }}
-          port: 21098
-          script: |
-            echo "Deleting .next directory"
-            rm -rf /home/woorapqt/apps/sunlah.com
-            
-      - name: Deploy project files
+      - name: Deploy to Server
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.VPS_IP }}
           username: ${{ secrets.VPS_USERNAME }}
           password: ${{ secrets.VPS_PASSWORD }}
           port: 21098
-          source: "client/package.json,client/pnpm-lock.yaml,client/ecosystem.config.js,client/.next/,client/server.js"
+          source: "client/.next/,client/package.json,client/pnpm-lock.yaml,client/server.js,client/public/"
           target: "/home/woorapqt/apps/sunlah.com"
           strip_components: 1
-
-      - name: Sync public directory
-        uses: appleboy/ssh-action@v0.1.6
-        with:
-          host: ${{ secrets.VPS_IP }}
-          username: ${{ secrets.VPS_USERNAME }}
-          password: ${{ secrets.VPS_PASSWORD }}
-          port: 21098
-          script: |
-            # Create public directory if it doesn't exist
-            mkdir -p /home/woorapqt/apps/sunlah.com/public
-
-      - name: Check public directory changes
-        id: changed-files
-        run: |
-          # 이전 커밋과 현재 커밋의 public 폴더 파일 목록 비교
-          git fetch --depth=2 origin main
-          
-          # 변경된 파일 목록을 임시 파일에 저장
-          git diff --name-only HEAD^ HEAD | grep "^client/public/" > changed_files.txt || true
-          
-          # 삭제된 파일 목록을 임시 파일에 저장
-          git diff --diff-filter=D --name-only HEAD^ HEAD | grep "^client/public/" > deleted_files.txt || true
-          
-          if [ -s changed_files.txt ] || [ -s deleted_files.txt ]; then
-            echo "Public files changed or deleted. Deploying..."
-            echo "changed=true" >> $GITHUB_OUTPUT
-            # 파일 목록을 Base64로 인코딩하여 저장
-            echo "files=$(cat changed_files.txt | base64 -w 0)" >> $GITHUB_OUTPUT
-            echo "deleted=$(cat deleted_files.txt | base64 -w 0)" >> $GITHUB_OUTPUT
-          else
-            echo "No public files changed. Skipping deployment."
-            echo "changed=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Handle deleted files
-        if: steps.changed-files.outputs.deleted
-        uses: appleboy/ssh-action@v0.1.6
-        with:
-          host: ${{ secrets.VPS_IP }}
-          username: ${{ secrets.VPS_USERNAME }}
-          password: ${{ secrets.VPS_PASSWORD }}
-          port: 21098
-          script: |
-            cd /home/woorapqt/apps/sunlah.com/public
-            # Base64로 인코딩된 삭제 파일 목록을 디코딩하여 처리
-            echo "${{ steps.changed-files.outputs.deleted }}" | base64 -d | while read file; do
-              relative_path=${file#client/public/}
-              if [ ! -z "$relative_path" ]; then
-                echo "Deleting $relative_path"
-                rm -f "$relative_path"
-              fi
-            done
-
-      - name: Deploy public files
-        if: steps.changed-files.outputs.changed == 'true'
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.VPS_IP }}
-          username: ${{ secrets.VPS_USERNAME }}
-          password: ${{ secrets.VPS_PASSWORD }}
-          port: 21098
-          source: "client/public/"
-          target: "/home/woorapqt/apps/sunlah.com/public"
-          strip_components: 2
           overwrite: true
 
-      - name: Log changes
-        if: steps.changed-files.outputs.changed == 'true'
-        run: |
-          echo "Changed public files:"
-          echo "${{ steps.changed-files.outputs.files }}" | base64 -d
-
-      - name: Install and Start Server
+      - name: Install Dependencies on Server
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.VPS_IP }}
@@ -156,44 +74,5 @@ jobs:
               npm install -g pnpm@10.7.1
             fi
             
-            # 의존성 설치 (--no-frozen-lockfile 옵션 추가)
+            # 의존성 설치
             pnpm install --prod --no-frozen-lockfile
-            
-            # 기존 서버 프로세스 종료 (더 안전한 방식)
-            if pgrep -f "node server.js" > /dev/null; then
-              echo "Gracefully stopping existing server..."
-              pkill -SIGTERM -f "node server.js"
-              # 프로세스가 완전히 종료될 때까지 대기
-              while pgrep -f "node server.js" > /dev/null; do
-                sleep 1
-              done
-            fi
-
-            # 서버 시작 전 포트 확인
-            if lsof -i:3000 > /dev/null; then
-              echo "Port 3000 is still in use. Forcing release..."
-              fuser -k 3000/tcp
-              sleep 2
-            fi
-
-            # 서버 시작
-            echo "Starting server..."
-            NODE_ENV=production nohup node server.js > server.log 2>&1 &
-            
-            # 서버 시작 확인 (타임아웃 추가)
-            TIMEOUT=30
-            ELAPSED=0
-            while [ $ELAPSED -lt $TIMEOUT ]; do
-              if pgrep -f "node server.js" > /dev/null; then
-                echo "Server started successfully!"
-                echo "Recent logs:"
-                tail -n 20 server.log
-                exit 0
-              fi
-              sleep 1
-              ELAPSED=$((ELAPSED + 1))
-            done
-            
-            echo "Server failed to start within ${TIMEOUT} seconds. Check server.log for details."
-            tail -n 50 server.log
-            exit 1
