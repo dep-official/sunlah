@@ -17,7 +17,7 @@ const nextConfig = {
             key: 'id'
           }
         ],
-        destination: '/7-billion-project?:query',
+        destination: '/7-billion-project?id=:id',
         permanent: true,
       }
     ];
