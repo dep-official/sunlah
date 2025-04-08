@@ -53,6 +53,9 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_SSH_KEY }}
+          port: 21098
+          script_stop: true
+          command_timeout: 30m
           script: |
             # Navigate to project directory
             cd /home/woorapqt/apps/sunlah.com
