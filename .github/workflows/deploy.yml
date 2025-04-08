@@ -54,10 +54,11 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           password: ${{ secrets.VPS_PASSWORD }}
           port: 21098
-          source: "client/.next/,client/package.json,client/pnpm-lock.yaml,client/server.js,client/public/**"
+          source: "client/.next/,client/package.json,client/pnpm-lock.yaml,client/server.js,client/public/"
           target: "/home/woorapqt/apps/sunlah.com"
           strip_components: 1
           overwrite: true
+          rm: false  # 기존 파일 유지
 
       - name: Install Dependencies on Server
         uses: appleboy/ssh-action@v0.1.6
@@ -76,3 +77,28 @@ jobs:
             
             # 의존성 설치
             pnpm install --prod --no-frozen-lockfile
+
+      - name: Check deployed files
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          port: 21098
+          script: |
+            cd /home/woorapqt/apps/sunlah.com
+            echo "Checking public directory structure:"
+            ls -R public/works/
+
+      - name: Set file permissions
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          port: 21098
+          script: |
+            cd /home/woorapqt/apps/sunlah.com
+            # public 디렉토리와 하위 파일들의 권한 설정
+            chmod -R 755 public
+            find public -type f -exec chmod 644 {} \;

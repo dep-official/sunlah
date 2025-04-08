@@ -24,8 +24,9 @@ export default function CV() {
       
       <main className="max-w-3xl mx-auto">
         <section className="mb-16">
-          <h2 className="text-2xl mb-8">SUN LAH</h2>
-          <p className="text-lg mb-4">KOREA, b. 1987</p>
+          <h2 className="text-2xl mb-8">
+            라선영<br/>
+          Sun Lah</h2>
         </section>
 
         <section className="mb-16">

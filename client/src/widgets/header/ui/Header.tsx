@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
+
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -9,7 +11,7 @@ export function Header() {
   return (
     <>
       <header className="flex justify-between items-center mb-20">
-        <p className="text-2xl"><Link href="/">Sun Lah</Link></p>
+        <p className="text-2xl"><Link href="/"><Image src="/logo.svg" alt="Sun Lah" width={100} height={100} /></Link></p>
         <ul className="hidden lg:flex flex-row gap-8 items-center text-xl">
           <li><Link href="/works">WORKS</Link></li>
           <li><Link href="/cv">CV</Link></li>
