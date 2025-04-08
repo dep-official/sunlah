@@ -69,7 +69,29 @@ jobs:
           target: "/home/woorapqt/apps/sunlah.com"
           strip_components: 1
 
-      - name: Start PM2
+      - name: Sync public directory
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          port: 21098
+          script: |
+            # Create public directory if it doesn't exist
+            mkdir -p /home/woorapqt/apps/sunlah.com/public
+
+      - name: Deploy public files
+        uses: Burnett01/rsync-deployments@5.2.1
+        with:
+          switches: -avzr --delete
+          path: client/public/
+          remote_path: /home/woorapqt/apps/sunlah.com/public/
+          remote_host: ${{ secrets.VPS_IP }}
+          remote_port: 21098
+          remote_user: ${{ secrets.VPS_USERNAME }}
+          remote_key: ${{ secrets.VPS_PASSWORD }}
+
+      - name: intall pnpm
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.VPS_IP }}
@@ -89,7 +111,3 @@ jobs:
             
             # 의존성 설치
             pnpm install --prod
-            
-            # PM2 프로세스 제거 후 재시작
-            pm2 delete sunlah || true
-            pm2 start ecosystem.config.js 
