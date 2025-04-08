@@ -56,7 +56,7 @@ jobs:
           port: 21098
           script: |
             echo "Deleting .next directory"
-            rm -rf /apps/sunlah.com/.next
+            rm -rf /home/woorapqt/apps/sunlah.com
             
       - name: Deploy project files
         uses: appleboy/scp-action@v0.1.7
@@ -66,7 +66,7 @@ jobs:
           password: ${{ secrets.VPS_PASSWORD }}
           port: 21098
           source: "client/package.json,client/pnpm-lock.yaml,client/ecosystem.config.js,client/.next/"
-          target: "/apps/sunlah.com/"
+          target: "/home/woorapqt/apps/sunlah.com"
           strip_components: 1
 
       - name: Start PM2
