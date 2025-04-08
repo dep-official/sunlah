@@ -1,0 +1,81 @@
+name: Deploy Next.js Client
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+          run_install: false
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: |
+          cd client
+          pnpm install
+
+      - name: Build
+        run: |
+          cd client
+          pnpm build
+
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            # Navigate to project directory
+            cd /home/woorapqt/apps/sunlah.com
+
+            # Pull latest changes
+            git pull origin main
+
+            # Install pnpm if not installed
+            if ! command -v pnpm &> /dev/null; then
+              npm install -g pnpm
+            fi
+
+            # Install dependencies
+            pnpm install
+
+            # Build the application
+            pnpm build
+
+            # Check if PM2 process exists and restart/start using ecosystem config
+            if pm2 show sunlah > /dev/null; then
+              # Reload the application using ecosystem config
+              pm2 reload ecosystem.config.js
+            else
+              # Start new PM2 process using ecosystem config
+              pm2 start ecosystem.config.js
+            fi 
