@@ -81,15 +81,16 @@ jobs:
             mkdir -p /home/woorapqt/apps/sunlah.com/public
 
       - name: Deploy public files
-        uses: Burnett01/rsync-deployments@5.2.1
+        uses: appleboy/scp-action@v0.1.7
         with:
-          switches: -avzr --delete
-          path: client/public/
-          remote_path: /home/woorapqt/apps/sunlah.com/public/
-          remote_host: ${{ secrets.VPS_IP }}
-          remote_port: 21098
-          remote_user: ${{ secrets.VPS_USERNAME }}
-          remote_key: ${{ secrets.VPS_PASSWORD }}
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          port: 21098
+          source: "client/public/"
+          target: "/home/woorapqt/apps/sunlah.com/public"
+          strip_components: 2
+          overwrite: true
 
       - name: intall pnpm
         uses: appleboy/ssh-action@v0.1.6
