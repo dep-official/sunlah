@@ -60,7 +60,7 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
       id: '5',
       artistId: 5,
       artistName: '고결',
-      src: '/audio/고결.m4a', 
+      src: '/audio/05_integrity.m4a', 
       duration: -1 
     },
     { 
@@ -74,14 +74,14 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
       id: '7',
       artistId: 7,
       artistName: '김옥라',
-      src: '/audio/07_김옥라.m4a', 
+      src: '/audio/07_kimokra.m4a', 
       duration: -1 
     },
     { 
       id: '8',
       artistId: 8,
       artistName: '오혜련',
-      src: '/audio/08_오혜련.m4a', 
+      src: '/audio/08_OhHyeRyeon.m4a', 
       duration: -1 
     },
     { 
@@ -95,14 +95,14 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
       id: '10',
       artistId: 10,
       artistName: '김옥라',
-      src: '/audio/10_김옥라.m4a', 
+      src: '/audio/10_kimokra_2.m4a', 
       duration: -1 
     },
     { 
       id: '11',
       artistId: 11,
       artistName: '정대호',
-      src: '/audio/11_정대호.m4a', 
+      src: '/audio/11_DaehoJeong.m4a', 
       duration: -1 
     },
   ],
