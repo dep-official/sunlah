@@ -15,10 +15,14 @@ const nextConfig = {
           {
             type: 'query',
             key: 'id'
+          },
+          {
+            type: 'query',
+            key: 'lang'
           }
         ],
-        destination: '/7-billion-project?id=:id',
-        permanent: true,
+        destination: '/7-billion-project?id=:id&lang=:lang',
+        permanent: true
       }
     ];
   },
