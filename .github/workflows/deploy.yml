@@ -80,7 +80,50 @@ jobs:
             # Create public directory if it doesn't exist
             mkdir -p /home/woorapqt/apps/sunlah.com/public
 
+      - name: Check public directory changes
+        id: changed-files
+        run: |
+          # 이전 커밋과 현재 커밋의 public 폴더 파일 목록 비교
+          git fetch --depth=2 origin main
+          
+          # 추가/수정된 파일
+          CHANGED_FILES=$(git diff --name-only HEAD^ HEAD | grep "^client/public/" || true)
+          
+          # 삭제된 파일
+          DELETED_FILES=$(git diff --diff-filter=D --name-only HEAD^ HEAD | grep "^client/public/" || true)
+          
+          if [ ! -z "$CHANGED_FILES" ] || [ ! -z "$DELETED_FILES" ]; then
+            echo "Public files changed or deleted. Deploying..."
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "files=$CHANGED_FILES" >> $GITHUB_OUTPUT
+            echo "deleted=$DELETED_FILES" >> $GITHUB_OUTPUT
+          else
+            echo "No public files changed. Skipping deployment."
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Handle deleted files
+        if: steps.changed-files.outputs.deleted
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          port: 21098
+          script: |
+            cd /home/woorapqt/apps/sunlah.com/public
+            # 삭제된 각 파일에 대해 서버에서도 삭제
+            echo "${{ steps.changed-files.outputs.deleted }}" | while read file; do
+              # client/public/ 부분을 제거하고 파일 경로 추출
+              relative_path=${file#client/public/}
+              if [ ! -z "$relative_path" ]; then
+                echo "Deleting $relative_path"
+                rm -f "$relative_path"
+              fi
+            done
+
       - name: Deploy public files
+        if: steps.changed-files.outputs.changed == 'true'
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.VPS_IP }}
