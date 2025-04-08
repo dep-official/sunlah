@@ -1,17 +1,17 @@
-name: Deploy Next.js Client
+name: Deploy to VPS
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -29,8 +29,8 @@ jobs:
         run: |
           echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
 
-      - uses: actions/cache@v3
-        name: Setup pnpm cache
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
         with:
           path: ${{ env.STORE_PATH }}
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -47,38 +47,43 @@ jobs:
           cd client
           pnpm build
 
-      - name: Deploy to Server
-        uses: appleboy/ssh-action@master
+      - name: Delete remote .next directory
+        uses: appleboy/ssh-action@v0.1.6
         with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
           port: 21098
-          script_stop: true
-          command_timeout: 30m
           script: |
-            # Navigate to project directory
-            cd /home/woorapqt/apps/sunlah.com
+            echo "Deleting .next directory"
+            rm -rf /apps/sunlah.com/.next
+            
+      - name: Deploy project files
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          port: 21098
+          source: "client/package.json,client/pnpm-lock.yaml,client/ecosystem.config.js,client/.next/"
+          target: "/apps/sunlah.com/"
+          strip_components: 1
 
-            # Pull latest changes
-            git pull origin main
-
-            # Install pnpm if not installed
+      - name: Start PM2
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          port: 21098
+          script: |
+            cd /apps/sunlah.com
             if ! command -v pnpm &> /dev/null; then
               npm install -g pnpm
             fi
-
-            # Install dependencies
             pnpm install
-
-            # Build the application
-            pnpm build
-
-            # Check if PM2 process exists and restart/start using ecosystem config
             if pm2 show sunlah > /dev/null; then
-              # Reload the application using ecosystem config
               pm2 reload ecosystem.config.js
             else
-              # Start new PM2 process using ecosystem config
               pm2 start ecosystem.config.js
             fi 
