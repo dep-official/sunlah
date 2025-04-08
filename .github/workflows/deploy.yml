@@ -86,17 +86,18 @@ jobs:
           # 이전 커밋과 현재 커밋의 public 폴더 파일 목록 비교
           git fetch --depth=2 origin main
           
-          # 추가/수정된 파일
-          CHANGED_FILES=$(git diff --name-only HEAD^ HEAD | grep "^client/public/" || true)
+          # 변경된 파일 목록을 임시 파일에 저장
+          git diff --name-only HEAD^ HEAD | grep "^client/public/" > changed_files.txt || true
           
-          # 삭제된 파일
-          DELETED_FILES=$(git diff --diff-filter=D --name-only HEAD^ HEAD | grep "^client/public/" || true)
+          # 삭제된 파일 목록을 임시 파일에 저장
+          git diff --diff-filter=D --name-only HEAD^ HEAD | grep "^client/public/" > deleted_files.txt || true
           
-          if [ ! -z "$CHANGED_FILES" ] || [ ! -z "$DELETED_FILES" ]; then
+          if [ -s changed_files.txt ] || [ -s deleted_files.txt ]; then
             echo "Public files changed or deleted. Deploying..."
             echo "changed=true" >> $GITHUB_OUTPUT
-            echo "files=$CHANGED_FILES" >> $GITHUB_OUTPUT
-            echo "deleted=$DELETED_FILES" >> $GITHUB_OUTPUT
+            # 파일 목록을 Base64로 인코딩하여 저장
+            echo "files=$(cat changed_files.txt | base64 -w 0)" >> $GITHUB_OUTPUT
+            echo "deleted=$(cat deleted_files.txt | base64 -w 0)" >> $GITHUB_OUTPUT
           else
             echo "No public files changed. Skipping deployment."
             echo "changed=false" >> $GITHUB_OUTPUT
@@ -112,9 +113,8 @@ jobs:
           port: 21098
           script: |
             cd /home/woorapqt/apps/sunlah.com/public
-            # 삭제된 각 파일에 대해 서버에서도 삭제
-            echo "${{ steps.changed-files.outputs.deleted }}" | while read file; do
-              # client/public/ 부분을 제거하고 파일 경로 추출
+            # Base64로 인코딩된 삭제 파일 목록을 디코딩하여 처리
+            echo "${{ steps.changed-files.outputs.deleted }}" | base64 -d | while read file; do
               relative_path=${file#client/public/}
               if [ ! -z "$relative_path" ]; then
                 echo "Deleting $relative_path"
@@ -134,6 +134,12 @@ jobs:
           target: "/home/woorapqt/apps/sunlah.com/public"
           strip_components: 2
           overwrite: true
+
+      - name: Log changes
+        if: steps.changed-files.outputs.changed == 'true'
+        run: |
+          echo "Changed public files:"
+          echo "${{ steps.changed-files.outputs.files }}" | base64 -d
 
       - name: intall pnpm
         uses: appleboy/ssh-action@v0.1.6
