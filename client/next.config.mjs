@@ -25,6 +25,7 @@ const nextConfig = {
   images: {
     domains: ['sunlah.com'],
     formats: ['image/avif', 'image/webp'],
+    unoptimized: true,
   },
   transpilePackages: ['zustand'],
 };
