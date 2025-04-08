@@ -1,10 +1,19 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import dynamic from 'next/dynamic';
 
 export const metadata: Metadata = {
-  title: "7 Billion Project",
-  description: "Art Project",
+  title: "Sun Lah",
+  description: "Art",
+  icons: {
+		icon: "/favicon.png",
+	},
 };
+
+const AudioPlayer = dynamic(
+  () => import('@/features/audio-player').then(mod => mod.AudioPlayer),
+  { ssr: false }
+);
 
 export default function RootLayout({
   children,

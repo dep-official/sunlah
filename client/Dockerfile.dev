@@ -1,0 +1,28 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+RUN apk add --no-cache libc6-compat
+RUN npm install -g pnpm
+
+# 워크스페이스 설정 파일 복사
+COPY pnpm-workspace.yaml ./
+COPY package.json ./
+
+# client 패키지 파일 복사
+COPY client/package.json ./client/
+COPY shared/package.json ./shared/
+COPY pnpm-lock.yaml ./
+
+# 설정 파일 복사
+COPY client/next.config.mjs ./client/
+COPY client/tsconfig.json ./client/
+COPY client/postcss.config.js ./client/
+COPY client/tailwind.config.ts ./client/
+
+# 워크스페이스 전체 설치
+RUN pnpm install
+
+WORKDIR /app/client
+EXPOSE 3000
+CMD ["pnpm", "dev"] 

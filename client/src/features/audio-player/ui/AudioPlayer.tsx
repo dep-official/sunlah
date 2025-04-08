@@ -2,8 +2,13 @@
 
 import { useAudioStore } from '../model/store';
 
-export function AudioPlayer() {
-  const { playAudio, isPlaying, playedAudios } = useAudioStore();
+interface AudioPlayerProps {
+  audioUrl: string;
+  id: string;
+}
+
+export function AudioPlayer({ audioUrl, id }: AudioPlayerProps) {
+  const { playAudio, isPlaying, playedAudios, currentAudio } = useAudioStore();
 
   // Simulated QR codes for testing
   const qrCodes = Array.from({ length: 12 }, (_, i) => `QR${i + 1}`);
@@ -15,14 +20,14 @@ export function AudioPlayer() {
           key={qrId}
           onClick={() => playAudio(qrId)}
           className={`p-4 rounded-lg ${
-            isPlaying(qrId)
+            isPlaying && audioUrl === qrId
               ? 'bg-green-500'
               : playedAudios.includes(qrId)
               ? 'bg-blue-500'
               : 'bg-gray-700'
           }`}
         >
-          {qrId} {isPlaying(qrId) ? '(Playing)' : playedAudios.includes(qrId) ? '(Played)' : ''}
+          {qrId} {isPlaying && audioUrl === qrId ? '(Playing)' : playedAudios.includes(qrId) ? '(Played)' : ''}
         </button>
       ))}
     </div>

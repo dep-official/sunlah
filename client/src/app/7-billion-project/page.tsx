@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useAudioStore } from '@/features/audio-player/model/store';
 import { InteractionModal } from '@/features/audio-player/ui/InteractionModal';
 import type { QRParams } from '@/features/audio-player/types';
 
-export default function SevenBillionProject() {
+// 현재 코드에서 useSearchParams를 사용하는 부분을 분리한 컴포넌트
+function ProjectContent() {
   const searchParams = useSearchParams();
   const { playAudioById, activeArtists, initializeAudio } = useAudioStore();
 
@@ -14,7 +15,6 @@ export default function SevenBillionProject() {
     id: searchParams.get('id') || '',
     lang: (searchParams.get('lang') as 'kr' | 'en') || 'kr'
   };
-
 
   // 초기화를 위한 useEffect
   useEffect(() => {
@@ -51,5 +51,14 @@ export default function SevenBillionProject() {
       </div>
       <InteractionModal />
     </div>
+  );
+}
+
+// 메인 페이지 컴포넌트
+export default function BillionProjectPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ProjectContent />
+    </Suspense>
   );
 } 

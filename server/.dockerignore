@@ -1,0 +1,7 @@
+node_modules
+dist
+.next
+Dockerfile
+Dockerfile.*
+.env
+.env.*

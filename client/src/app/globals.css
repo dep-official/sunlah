@@ -10,6 +10,21 @@
 
 body {
   font-family: "ltc-nicholas-cochin-pro", sans-serif;
+  color: #000;
+  background: #fff;
+}
+
+input, textarea {
+  background: transparent;
+}
+
+input:focus, textarea:focus {
+  outline: none;
+}
+
+/* 부드러운 트랜지션 */
+.transition-all {
+  transition: all 0.3s ease;
 }
 
 @keyframes fadeIn {
@@ -25,4 +40,48 @@ body {
 
 .animate-fade-in {
   animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes lineGrow {
+  from {
+    width: 0;
+    left: 0;
+  }
+  to {
+    width: 100%;
+    left: 0;
+  }
+}
+
+@keyframes lineShrink {
+  from {
+    width: 100%;
+    left: 0;
+  }
+  to {
+    width: 0;
+    left: 100%;
+  }
+}
+
+.link-underline {
+  position: relative;
+}
+
+.link-underline::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background-color: currentColor;
+}
+
+.group:hover .link-underline::after {
+  animation: lineGrow 0.2s ease-in forwards;
+}
+
+.group:not(:hover) .link-underline::after {
+  animation: lineShrink 0.2s ease-in forwards;
 }

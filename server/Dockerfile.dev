@@ -1,0 +1,24 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+RUN npm install -g pnpm
+
+# 워크스페이스 설정 파일 복사
+COPY pnpm-workspace.yaml ./
+COPY package.json ./
+
+# server 패키지 파일 복사
+COPY server/package.json ./server/
+# shared 패키지 파일 복사 (의존성이 있는 경우)
+COPY shared/package.json ./shared/
+
+# Root의 lock 파일 복사
+COPY pnpm-lock.yaml ./
+
+# 워크스페이스 전체 설치
+RUN pnpm install
+
+WORKDIR /app/server
+EXPOSE 4000
+CMD ["pnpm", "start:dev"] 

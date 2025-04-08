@@ -1,3 +1,5 @@
+'use client';
+
 import { create } from 'zustand';
 import { AudioConfig } from '../types';
 
@@ -13,8 +15,11 @@ interface AudioStore {
   hasInteracted: boolean;  // 사용자 상호작용 여부
   initializeAudio: () => void;
   playAudioById: (id: string) => void;
-  isPlaying: (id: string) => boolean;
+  isPlaying: boolean;
   setHasInteracted: () => void;  // 상호작용 상태 설정
+  currentAudio: string | null;
+  playAudio: (id: string) => void;
+  stopAudio: () => void;
 }
 
 export const useAudioStore = create<AudioStore>((set, get) => ({
@@ -26,53 +31,89 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
     { 
       id: '1',
       artistId: 1,
-      artistName: 'Chris Succo',
-      src: '/audio/01.mp3', 
+      artistName: 'Catherine Oh Cruzic',
+      src: '/audio/01_Catherine.m4a', 
       duration: 30000
     },
     { 
       id: '2',
       artistId: 2,
-      artistName: 'Hana Lee',
-      src: '/audio/02.mp3', 
+      artistName: 'Chris Succo',
+      src: '/audio/02_Chris.m4a', 
       duration: -1 
     },
     { 
       id: '3',
       artistId: 3,
-      artistName: 'Luke Hart',
-      src: '/audio/03.mp3', 
+      artistName: 'Hana Lee',
+      src: '/audio/03_Hana.m4a', 
       duration: 45000 
     },
     { 
       id: '4',
       artistId: 4,
-      artistName: 'Sun Lah',
-      src: '/audio/04.mp3', 
+      artistName: 'Luke Hart',
+      src: '/audio/04_Luke.m4a', 
       duration: 20000
     },
     { 
       id: '5',
       artistId: 5,
-      artistName: 'Claire Poulter',
-      src: '/audio/05.mp3', 
+      artistName: '고결',
+      src: '/audio/고결.m4a', 
       duration: -1 
     },
     { 
       id: '6',
       artistId: 6,
       artistName: 'Claire Poulter',
-      src: '/audio/06.mp3', 
+      src: '/audio/06_Claire.m4a', 
       duration: 500000 
     },
     { 
       id: '7',
       artistId: 7,
-      artistName: 'Claire Poulter',
-      src: '/audio/07.mp3', 
+      artistName: '김옥라',
+      src: '/audio/07_김옥라.m4a', 
+      duration: -1 
+    },
+    { 
+      id: '8',
+      artistId: 8,
+      artistName: '오혜련',
+      src: '/audio/08_오혜련.m4a', 
+      duration: -1 
+    },
+    { 
+      id: '9',
+      artistId: 9,
+      artistName: 'Luke Hart',
+      src: '/audio/09_Luke Hart.m4a', 
+      duration: -1 
+    },
+    { 
+      id: '10',
+      artistId: 10,
+      artistName: '김옥라',
+      src: '/audio/10_김옥라.m4a', 
+      duration: -1 
+    },
+    { 
+      id: '11',
+      artistId: 11,
+      artistName: '정대호',
+      src: '/audio/11_정대호.m4a', 
       duration: -1 
     },
   ],
+  currentAudio: null,
+  isPlaying: false,
+  playAudio: (id) => set((state) => ({
+    isPlaying: true,
+    currentAudio: id,
+    playedAudios: [...Array.from(state.playedAudios), id]
+  })),
+  stopAudio: () => set({ isPlaying: false, currentAudio: null }),
 
   initializeAudio: () => {
     const savedAudios = localStorage.getItem('playedAudios');
@@ -246,10 +287,6 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
     }));
 
     localStorage.setItem('playedAudios', JSON.stringify([...new Set([...playedAudios, id])]));
-  },
-
-  isPlaying: (id: string) => {
-    return !!get().activeAudios[id];
   },
 
   setHasInteracted: () => {

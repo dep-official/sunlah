@@ -4,7 +4,12 @@
   "scripts": {
     "client": "cd client && pnpm dev",
     "server": "cd server && pnpm start:dev",
-    "dev": "concurrently \"pnpm run client\" \"pnpm run server\""
+    "dev": "concurrently \"pnpm run client\" \"pnpm run server\"",
+    "build": "cd client && pnpm build",
+    "start": "cd client && pnpm start",
+    "docker:dev": "docker compose --env-file .env -f docker/docker-compose.yml up --build",
+    "docker:prod": "docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml up --build -d",
+    "docker:down": "docker compose -f docker/docker-compose.yml down"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

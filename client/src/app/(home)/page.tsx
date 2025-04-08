@@ -1,6 +1,13 @@
+'use client';
 
-export default function HomePage() {
-  return <div>
-    
-  </div>;
-}
+import { Header } from '@/widgets';
+import { EventList } from '@/features/events';
+
+export default function Home() {
+  return (
+    <div className="min-h-screen bg-white p-8 font-nicholas">
+      <Header />
+      <EventList />
+    </div>
+  );
+} 
