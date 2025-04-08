@@ -65,7 +65,7 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           password: ${{ secrets.VPS_PASSWORD }}
           port: 21098
-          source: "client/package.json,client/pnpm-lock.yaml,client/ecosystem.config.js,client/.next/"
+          source: "client/package.json,client/pnpm-lock.yaml,client/ecosystem.config.js,client/.next/,client/server.js"
           target: "/home/woorapqt/apps/sunlah.com"
           strip_components: 1
 
