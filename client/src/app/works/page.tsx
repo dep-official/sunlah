@@ -6,7 +6,7 @@ import { works } from '@/shared/data/works';
 
 export default function Works() {
   return (
-    <div className="min-h-screen bg-white p-8 font-nicholas">
+    <div className="min-h-screen p-8 bg-white font-nicholas">
       <Header />
       <section>
         <div>
@@ -18,7 +18,7 @@ export default function Works() {
           <span>And more</span>
         </div>
       </section>
-      <main className="max-w-7xl mx-auto mt-16 relative">
+      <main className="relative mx-auto my-16 max-w-7xl">
         <WorkList works={works} />
       </main>
     </div>
