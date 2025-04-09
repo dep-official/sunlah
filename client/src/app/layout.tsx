@@ -28,7 +28,7 @@ export default function RootLayout({
       </head>
       <body className="container mx-auto lg:mt-20">
         <Header />
-        <div className="py-40">
+        <div className="py-32">
          {children}
         </div>
       </body>

@@ -34,8 +34,8 @@ function ProjectContent() {
         <h1 className="text-3xl">
           7 Billion Project
         </h1> 
-        <p className="italic text-2xl mt-1">- Skin and fleb -</p>
-        <p className='text-2xl mt-3'>Sun Lah</p>
+        <p className="mt-1 text-2xl italic">- Skin and Flesh -</p>
+        <p className='mt-3 text-2xl'>Sun Lah</p>
         
         <p className="mt-20 mb-4 text-3xl">You are listening to</p>
         {activeArtists.length > 0 && (
@@ -43,7 +43,7 @@ function ProjectContent() {
             {activeArtists.map((artist, index) => (
               <div key={index}>
                 {index !== 0 && <p>*</p>}
-                <p className="text-xl mt-1">{artist.name}</p>
+                <p className="mt-1 text-xl">{artist.name}</p>
               </div>
             ))}
           </div>
@@ -57,7 +57,7 @@ function ProjectContent() {
 // 메인 페이지 컴포넌트
 export default function BillionProjectPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div></div>}>
       <ProjectContent />
     </Suspense>
   );
