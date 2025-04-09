@@ -12,13 +12,19 @@ export const AudioPlayer = ({ src }: { src: string }) => {
       audioRef.current.load();
       
       audioRef.current.addEventListener('loadeddata', () => {
+        console.log('Audio loaded');
         setIsAudioReady(true);
+      });
+
+      audioRef.current.addEventListener('error', (e) => {
+        console.error('Audio error:', e);
       });
     }
 
     return () => {
       if (audioRef.current) {
         audioRef.current.removeEventListener('loadeddata', () => {});
+        audioRef.current.removeEventListener('error', () => {});
       }
     };
   }, [setIsAudioReady]);

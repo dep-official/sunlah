@@ -17,16 +17,11 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ko">
-      <head>
-        <link rel="stylesheet" href="https://use.typekit.net/sfe3gei.css" />
-      </head>
-      <body className="container mx-auto lg:mt-20">
+      <div className="container mx-auto lg:mt-20">
         <Header />
         <div className="py-32">
          {children}
         </div>
-      </body>
-    </html>
+      </div>
   );
 }
