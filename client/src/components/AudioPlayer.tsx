@@ -1,7 +1,7 @@
 'use client'
 
 import { useContext, useEffect, useRef } from 'react'
-import { AudioContext } from '../app/layout'
+import { AudioContext } from '@/context/AudioContext'
 
 export const AudioPlayer = ({ src }: { src: string }) => {
   const audioRef = useRef<HTMLAudioElement>(null);
