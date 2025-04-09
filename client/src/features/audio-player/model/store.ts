@@ -31,78 +31,85 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
     { 
       id: '1',
       artistId: 1,
-      artistName: 'Catherine Oh Cruzic',
-      src: '/audio/01_Catherine.m4a', 
-      duration: 30000
+      artistName: 'Sun Lah',
+      src: '/audio/1_Sun.mp3', 
+      duration: -1
     },
     { 
       id: '2',
       artistId: 2,
-      artistName: 'Chris Succo',
-      src: '/audio/02_Chris.m4a', 
+      artistName: 'Alexandre Renoux',
+      src: '/audio/2_Alex.mp3', 
       duration: -1 
     },
     { 
       id: '3',
       artistId: 3,
-      artistName: 'Hana Lee',
-      src: '/audio/03_Hana.m4a', 
-      duration: 45000 
+      artistName: 'Koh Gyeol',
+      src: '/audio/3_Kogyol.mp3', 
+      duration: -1 
     },
     { 
       id: '4',
       artistId: 4,
-      artistName: 'Luke Hart',
-      src: '/audio/04_Luke.m4a', 
-      duration: 20000
+      artistName: 'Claire Poulter',
+      src: '/audio/4_Claire.mp3', 
+      duration: -1
     },
     { 
       id: '5',
       artistId: 5,
-      artistName: '고결',
-      src: '/audio/05_integrity.m4a', 
+      artistName: 'Catherine Kruzic',
+      src: '/audio/5_Catherine.mp3', 
       duration: -1 
     },
     { 
       id: '6',
       artistId: 6,
-      artistName: 'Claire Poulter',
-      src: '/audio/06_Claire.m4a', 
-      duration: 500000 
+      artistName: 'Daeho Chung',
+      src: '/audio/6_Cheung_Deho.mp3', 
+      duration: -1 
     },
     { 
       id: '7',
       artistId: 7,
-      artistName: '김옥라',
-      src: '/audio/07_kimokra.m4a', 
+      artistName: 'Chris Succo',
+      src: '/audio/7_Chris_Succo.mp3', 
       duration: -1 
     },
     { 
       id: '8',
       artistId: 8,
-      artistName: '오혜련',
-      src: '/audio/08_OhHyeRyeon.m4a', 
+      artistName: 'Heryun Oh',
+      src: '/audio/8_Hana_Lee.mp3', 
       duration: -1 
     },
     { 
       id: '9',
       artistId: 9,
-      artistName: 'Luke Hart',
-      src: '/audio/09_Luke Hart.m4a', 
+      artistName: 'Oknah Kim',
+      src: '/audio/9_Kim_Okla.mp3', 
       duration: -1 
     },
     { 
       id: '10',
       artistId: 10,
-      artistName: '김옥라',
-      src: '/audio/10_kimokra_2.m4a', 
+      artistName: 'Oknah Kim Lah',
+      src: '/audio/10_Suns_Mom.mp3', 
       duration: -1 
     },
     { 
       id: '11',
       artistId: 11,
-      artistName: '정대호',
-      src: '/audio/11_DaehoJeong.m4a', 
+      artistName: 'Luke Hart',
+      src: '/audio/11_Luke_Hart.mp3', 
+      duration: -1 
+    },
+    { 
+      id: '12',
+      artistId: 12,
+      artistName: 'Yana Naidenov',
+      src: '/audio/12_Yana.mp3', 
       duration: -1 
     },
   ],
