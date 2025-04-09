@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "@/app/globals.css";
-import dynamic from 'next/dynamic';
 import { Header } from "@/widgets";
 
 export const metadata: Metadata = {
@@ -11,12 +10,8 @@ export const metadata: Metadata = {
 	},
 };
 
-const AudioPlayer = dynamic(
-  () => import('@/features/audio-player').then(mod => mod.AudioPlayer),
-  { ssr: false }
-);
 
-export default function RootLayout({
+export default function MainLayout({
   children,
 }: {
   children: React.ReactNode;
