@@ -47,7 +47,7 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
       id: '3',
       artistId: 3,
       artistName: 'Oknah Kim Lah',
-      src: '/audio/10_Suns_Mom.mp3', 
+      src: '/audio/9_Kim_Okla.mp3',
       duration: -1 
     },
     { 
@@ -96,7 +96,7 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
       id: '10',
       artistId: 10,
       artistName: 'Heryun Oh',
-      src: '/audio/9_Kim_Okla.mp3', 
+      src: '/audio/10_Suns_Mom.mp3', 
       duration: -1 
     },
     { 
