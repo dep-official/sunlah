@@ -28,33 +28,34 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
   activeArtists: [],
   hasInteracted: false,
   audioConfigs: [
+   
     { 
       id: '1',
-      artistId: 1,
-      artistName: 'Sun Lah',
-      src: '/audio/1_Sun.mp3', 
-      duration: -1
+      artistId: 6,
+      artistName: 'Daeho Chung',
+      src: '/audio/6_Cheung_Deho.mp3', 
+      duration: -1 
     },
     { 
       id: '2',
       artistId: 2,
-      artistName: 'Alexandre Renoux',
-      src: '/audio/2_Alex.mp3', 
+      artistName: 'Luke Hart',
+      src: '/audio/11_Luke_Hart.mp3', 
       duration: -1 
     },
     { 
       id: '3',
       artistId: 3,
-      artistName: 'Koh Gyeol',
-      src: '/audio/3_Kogyol.mp3', 
+      artistName: 'Oknah Kim Lah',
+      src: '/audio/10_Suns_Mom.mp3', 
       duration: -1 
     },
     { 
       id: '4',
       artistId: 4,
-      artistName: 'Claire Poulter',
-      src: '/audio/4_Claire.mp3', 
-      duration: -1
+      artistName: 'Koh Gyeol',
+      src: '/audio/3_Kogyol.mp3', 
+      duration: -1 
     },
     { 
       id: '5',
@@ -66,50 +67,50 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
     { 
       id: '6',
       artistId: 6,
-      artistName: 'Daeho Chung',
-      src: '/audio/6_Cheung_Deho.mp3', 
-      duration: -1 
+      artistName: 'Sun Lah',
+      src: '/audio/1_Sun.mp3', 
+      duration: -1
     },
     { 
       id: '7',
       artistId: 7,
-      artistName: 'Chris Succo',
-      src: '/audio/7_Chris_Succo.mp3', 
+      artistName: 'Hana Lee',
+      src: '/audio/8_Hana_Lee.mp3', 
       duration: -1 
     },
     { 
       id: '8',
       artistId: 8,
-      artistName: 'Heryun Oh',
-      src: '/audio/8_Hana_Lee.mp3', 
+      artistName: 'Yana Naidenov',
+      src: '/audio/12_Yana.mp3', 
       duration: -1 
     },
     { 
       id: '9',
       artistId: 9,
-      artistName: 'Oknah Kim',
-      src: '/audio/9_Kim_Okla.mp3', 
+      artistName: 'Chris Succo',
+      src: '/audio/7_Chris_Succo.mp3', 
       duration: -1 
     },
     { 
       id: '10',
       artistId: 10,
-      artistName: 'Oknah Kim Lah',
-      src: '/audio/10_Suns_Mom.mp3', 
+      artistName: 'Heryun Oh',
+      src: '/audio/9_Kim_Okla.mp3', 
       duration: -1 
     },
     { 
       id: '11',
       artistId: 11,
-      artistName: 'Luke Hart',
-      src: '/audio/11_Luke_Hart.mp3', 
-      duration: -1 
+      artistName: 'Claire Poulter',
+      src: '/audio/4_Claire.mp3', 
+      duration: -1
     },
     { 
       id: '12',
       artistId: 12,
-      artistName: 'Yana Naidenov',
-      src: '/audio/12_Yana.mp3', 
+      artistName: 'Alexandre Renoux',
+      src: '/audio/2_Alex.mp3', 
       duration: -1 
     },
   ],
