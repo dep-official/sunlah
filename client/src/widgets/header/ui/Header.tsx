@@ -14,7 +14,7 @@ export function Header() {
             <Image src="/logo.svg" alt="Sun Lah" className='w-12 h-12 lg:w-16 lg:h-16' width={64} height={64} />
           </Link>
         </p>
-        <div className="gap-1 lg:gap-2 text-sm flex font-verdana [&>*]:text-[6px] leading-[10px] lg:text-[12px] lg:leading-[25px]">
+        <div className="gap-1 lg:gap-2 text-sm flex font-verdana [&>*]:text-[6px] [&>*]:leading-[10px] [&>*]:lg:text-[12px] [&>*]:lg:leading-[25px]">
           <button>Kor</button>
           <span>/</span>
           <button>Eng</button>
