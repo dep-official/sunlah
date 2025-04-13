@@ -138,6 +138,14 @@ input:focus, textarea:focus {
 
 @font-face {
   font-family: 'Verdana';
+  src: url('/fonts/verdanaib.woff') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Verdana';
   src: url('/fonts/verdanab.woff') format('truetype');
   font-weight: 700;
   font-style: normal;

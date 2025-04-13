@@ -95,7 +95,7 @@ export default function CV() {
               </tr>
               <tr>  
                 <td>2016</td>
-                <td>'지리산 프로젝트 : 2016 - 우주; 여자, 실상사, 남원', 최정아갤러리</td>
+                <td>'지리산 프로젝트 : 2016 - 우주; 여자, 실상사', 남원</td>
               </tr>
               <tr>
                 <td></td>
@@ -111,7 +111,7 @@ export default function CV() {
               </tr>
               <tr>
                 <td></td>
-                <td>'꿈꾸다: 봄', 서울, 서울시청 로비</td>
+                <td>꿈꾸다: 봄, 서울, 서울시청 로비</td>
               </tr>
               <tr>
                 <td></td>

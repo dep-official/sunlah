@@ -1,7 +1,7 @@
 'use client';
 
+import { Work } from '@/entities/work/model/types';
 import { WorkCard } from '@/entities/work/ui/WorkCard';
-import type { Work } from '@/entities/work/model/types';
 
 interface WorkListProps {
   works: Work[];
@@ -9,9 +9,9 @@ interface WorkListProps {
 
 export function WorkList({ works }: WorkListProps) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3">
       {works.map((work) => (
-        <WorkCard key={work.id} work={work} />
+        <WorkCard key={work.slug} work={work} />
       ))}
     </div>
   );

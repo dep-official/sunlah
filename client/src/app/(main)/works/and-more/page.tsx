@@ -3,10 +3,11 @@
 import { works } from '@/shared/data/works';
 import { WorkList } from '@/widgets/work-list';
 
-export default function WorksPage() {
+const AndMorePage = () => {
   return (
     <div className="w-full">
       <WorkList works={works} />
     </div>
   );
 }
+export default AndMorePage;

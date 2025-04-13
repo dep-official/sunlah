@@ -1,7 +1,9 @@
 export interface Work {
-  id: number;
+  slug: string;
   title: string;
-  year: string;
   src: string;
-  link: string;
+  year?: number;
+  medium?: string;
+  dimensions?: string;
+  category?: '7-billion-project' | 'and-more';
 } 
