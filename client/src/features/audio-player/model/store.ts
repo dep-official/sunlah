@@ -4,34 +4,56 @@ import { create } from 'zustand';
 import { AudioConfig } from '../types';
 
 interface AudioStore {
-  activeAudios: Record<string, HTMLAudioElement>;
-  playedAudios: string[];
-  audioConfigs: AudioConfig[];
+  activeAudios: Map<string, HTMLAudioElement>;
   activeArtists: Array<{
     name: string;
-    audioId: string;  // endTime 대신 audioId로 매칭
+    audioId: string;
   }>;
-  currentArtist?: string;
-  hasInteracted: boolean;  // 사용자 상호작용 여부
+  audioConfigs: AudioConfig[];
+  hasInteracted: boolean;
   initializeAudio: () => void;
   playAudioById: (id: string) => void;
-  isPlaying: boolean;
-  setHasInteracted: () => void;  // 상호작용 상태 설정
-  currentAudio: string | null;
-  playAudio: (id: string) => void;
-  stopAudio: () => void;
+  setHasInteracted: () => void;
+}
+
+interface Artist {
+  name: string;
+  audioId: string;
+}
+
+const STORAGE_KEYS = {
+  VISITED_IDS: 'visitedAudioIds',
+  HAS_INTERACTED: 'hasInteracted',
+};
+
+// 브라우저 종료 시에만 초기화하도록 수정
+if (typeof window !== 'undefined') {
+  let isUnloading = false;
+
+  window.addEventListener('beforeunload', () => {
+    isUnloading = true;
+    setTimeout(() => {
+      if (isUnloading) {
+        localStorage.removeItem(STORAGE_KEYS.VISITED_IDS);
+        localStorage.removeItem(STORAGE_KEYS.HAS_INTERACTED);
+      }
+    }, 0);
+  });
+
+  // 새로고침 감지
+  window.addEventListener('load', () => {
+    isUnloading = false;
+  });
 }
 
 export const useAudioStore = create<AudioStore>((set, get) => ({
-  activeAudios: {},
-  playedAudios: [],
+  activeAudios: new Map(),
   activeArtists: [],
-  hasInteracted: false,
+  hasInteracted: JSON.parse(localStorage.getItem(STORAGE_KEYS.HAS_INTERACTED) || 'false'),
   audioConfigs: [
-   
     { 
       id: '1',
-      artistId: 6,
+      artistId: 1,
       artistName: 'Daeho Chung',
       src: '/audio/6_Cheung_Deho.mp3', 
       duration: -1 
@@ -114,190 +136,128 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
       duration: -1 
     },
   ],
-  currentAudio: null,
-  isPlaying: false,
-  playAudio: (id) => set((state) => ({
-    isPlaying: true,
-    currentAudio: id,
-    playedAudios: [...Array.from(state.playedAudios), id]
-  })),
-  stopAudio: () => set({ isPlaying: false, currentAudio: null }),
 
   initializeAudio: () => {
-    const savedAudios = localStorage.getItem('playedAudios');
-    const savedArtists = localStorage.getItem('activeArtists');
+    try {
+      // localStorage에서 방문한 ID들을 가져옴
+      const visitedIds = JSON.parse(localStorage.getItem(STORAGE_KEYS.VISITED_IDS) || '[]') as string[];
+      const savedHasInteracted = JSON.parse(localStorage.getItem(STORAGE_KEYS.HAS_INTERACTED) || 'false');
 
-    if (savedAudios) {
-      const savedIds = JSON.parse(savedAudios);
-      set({ playedAudios: savedIds });
-
-      if (savedArtists) {
-        const artists = JSON.parse(savedArtists);
-        const filteredArtists = artists.filter(
-          (artist: { name: string; audioId: string }) => 
-            savedIds.includes(artist.audioId)
-        );
-        set({ activeArtists: filteredArtists });
-      }
-
-      savedIds.forEach((id: string) => {
-        const config = get().audioConfigs.find(cfg => cfg.id === id);
-        if (config) {
-          const audio = new Audio();
-          audio.src = config.src;
-          audio.loop = true;
-          audio.preload = 'auto';
-          audio.muted = true;
-          audio.autoplay = true;
-          audio.setAttribute('playsinline', '');
-
-          get().activeAudios[id] = audio;
-
-          const playAndUnmute = () => {
-            const gesture = new MouseEvent('click', {
-              bubbles: true,
-              cancelable: true,
-              view: window
-            });
-            document.dispatchEvent(gesture);
-
-            audio.play().then(() => {
-              audio.muted = false;
-            }).catch(() => {
-              setTimeout(playAndUnmute, 100);
-            });
-          };
-
-          playAndUnmute();
-
-          // 초기화 시에도 duration 체크하여 타이머 설정
-          if (config.duration > 0) {
-            const cleanupAudio = () => {
-              audio.pause();
-              audio.currentTime = 0;
-              audio.src = '';
-              audio.load();
-
-              const { activeAudios, activeArtists, playedAudios } = get();
-              
-              const newActiveAudios = { ...activeAudios };
-              delete newActiveAudios[id];
-              
-              const updatedArtists = activeArtists.filter(artist => artist.audioId !== id);
-              const updatedPlayedAudios = playedAudios.filter(audioId => audioId !== id);
-              
-              set({ 
-                activeAudios: newActiveAudios,
-                activeArtists: updatedArtists,
-                playedAudios: updatedPlayedAudios
-              });
-
-              localStorage.removeItem(`audio_${id}`);
-              localStorage.setItem('activeArtists', JSON.stringify(updatedArtists));
-              localStorage.setItem('playedAudios', JSON.stringify(updatedPlayedAudios));
-            };
-
-            setTimeout(cleanupAudio, config.duration);
-          }
-        }
+      // 기존 오디오 정리
+      const { activeAudios } = get();
+      activeAudios.forEach(audio => {
+        audio.pause();
+        audio.currentTime = 0;
       });
+
+      if (visitedIds.length > 0) {
+        const audios = new Map<string, HTMLAudioElement>();
+        const artists: Artist[] = [];
+
+        visitedIds.forEach((id: string) => {
+          const config = get().audioConfigs.find(cfg => cfg.id === id);
+          if (config) {
+            const audio = new Audio(config.src);
+            audio.loop = true;
+            audios.set(id, audio);
+            artists.push({
+              name: config.artistName,
+              audioId: id
+            });
+          }
+        });
+
+        set({
+          activeArtists: artists,
+          activeAudios: audios,
+          hasInteracted: savedHasInteracted
+        });
+
+        // 이미 상호작용했다면 모든 오디오 재생
+        if (savedHasInteracted) {
+          audios.forEach(audio => {
+            audio.play().catch(error => {
+              console.warn('Audio playback failed:', error);
+            });
+          });
+        }
+
+        console.log('\n=== 현재 오디오 상태 ===');
+        console.log('저장된 ID들:', visitedIds);
+        console.log('재생 중인 작가들:', artists.map(a => a.name).join(' + '));
+        console.log('========================\n');
+      }
+    } catch (error) {
+      console.error('초기화 중 오류 발생:', error);
     }
   },
 
   playAudioById: (id: string) => {
-    const { activeAudios, audioConfigs, playedAudios, activeArtists } = get();
+    try {
+      const { audioConfigs, activeAudios, activeArtists, hasInteracted } = get();
+      const config = audioConfigs.find(cfg => cfg.id === id);
+      
+      if (!config) return;
 
-    const config = audioConfigs.find(cfg => cfg.id === id);
-    if (!config) return;
-
-    // 이전에 실행 중이던 같은 오디오가 있다면 정리
-    if (activeAudios[id]) {
-      const existingAudio = activeAudios[id];
-      existingAudio.pause();
-      existingAudio.currentTime = 0;
-      existingAudio.src = '';
-      existingAudio.load();
-      delete activeAudios[id];
-    }
-
-    const audio = new Audio();
-    audio.src = config.src;
-    audio.loop = true;
-    audio.preload = 'auto';
-    audio.muted = true;
-    audio.autoplay = true;
-    audio.setAttribute('playsinline', '');
-
-    // 새 작가 추가
-    const artistInfo = {
-      name: config.artistName,
-      audioId: id
-    };
-    const updatedArtists = [...activeArtists.filter(a => a.audioId !== id), artistInfo];
-    set({ activeArtists: updatedArtists });
-    localStorage.setItem('activeArtists', JSON.stringify(updatedArtists));
-
-    const playAndUnmute = () => {
-      const gesture = new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-        view: window
-      });
-      document.dispatchEvent(gesture);
-
-      audio.play().then(() => {
-        audio.muted = false;
-      }).catch(() => {
-        setTimeout(playAndUnmute, 100);
-      });
-    };
-
-    playAndUnmute();
-
-    // duration이 있는 경우 타이머 설정
-    if (config.duration > 0) {
-      const cleanupAudio = () => {
-        // 오디오 정지 및 리소스 해제
-        audio.pause();
-        audio.currentTime = 0;
-        audio.src = '';
-        audio.load();
-
-        const { activeAudios, activeArtists, playedAudios } = get();
+      // localStorage에서 방문 기록 가져오기
+      const visitedIds = JSON.parse(localStorage.getItem(STORAGE_KEYS.VISITED_IDS) || '[]') as string[];
+      
+      // 새로운 ID 추가
+      if (!visitedIds.includes(id)) {
+        // localStorage 업데이트
+        const updatedVisitedIds = [...visitedIds, id];
+        localStorage.setItem(STORAGE_KEYS.VISITED_IDS, JSON.stringify(updatedVisitedIds));
         
-        // 상태에서 제거
-        const newActiveAudios = { ...activeAudios };
-        delete newActiveAudios[id];
+        // 새 오디오 생성 및 추가
+        const audio = new Audio(config.src);
+        audio.loop = true;
+
+        // 새 작가 정보 추가
+        const newArtist = {
+          name: config.artistName,
+          audioId: id
+        };
+
+        // 기존 오디오와 작가 정보 유지하면서 새로운 것 추가
+        const newActiveAudios = new Map(activeAudios);
+        newActiveAudios.set(id, audio);
         
-        const updatedArtists = activeArtists.filter(artist => artist.audioId !== id);
-        const updatedPlayedAudios = playedAudios.filter(audioId => audioId !== id);
-        
-        // 상태 업데이트
-        set({ 
+        set({
           activeAudios: newActiveAudios,
-          activeArtists: updatedArtists,
-          playedAudios: updatedPlayedAudios
+          activeArtists: [...activeArtists, newArtist]
         });
 
-        // 로컬 스토리지 업데이트
-        localStorage.removeItem(`audio_${id}`); // 개별 오디오 데이터 제거
-        localStorage.setItem('activeArtists', JSON.stringify(updatedArtists));
-        localStorage.setItem('playedAudios', JSON.stringify(updatedPlayedAudios));
-      };
+        // 이미 상호작용했다면 새 오디오 재생
+        if (hasInteracted) {
+          audio.play().catch(error => {
+            console.warn('Audio playback failed:', error);
+          });
+        }
 
-      setTimeout(cleanupAudio, config.duration);
+        console.log('\n=== 현재 오디오 상태 ===');
+        console.log('저장된 ID들:', updatedVisitedIds);
+        console.log('재생 중인 작가들:', [...activeArtists, newArtist].map(a => a.name).join(' + '));
+        console.log('========================\n');
+      }
+    } catch (error) {
+      console.error('오디오 재생 중 오류 발생:', error);
     }
-
-    // 현재 오디오 상태 저장
-    set(state => ({
-      activeAudios: { ...state.activeAudios, [id]: audio },
-      playedAudios: [...new Set([...state.playedAudios, id])]
-    }));
-
-    localStorage.setItem('playedAudios', JSON.stringify([...new Set([...playedAudios, id])]));
   },
 
   setHasInteracted: () => {
-    set({ hasInteracted: true });
-  },
+    try {
+      set({ hasInteracted: true });
+      localStorage.setItem(STORAGE_KEYS.HAS_INTERACTED, 'true');
+      
+      // 모든 저장된 오디오 재생
+      const { activeAudios } = get();
+      activeAudios.forEach(audio => {
+        audio.play().catch(error => {
+          console.warn('Audio playback failed:', error);
+        });
+      });
+    } catch (error) {
+      console.error('상호작용 설정 중 오류 발생:', error);
+    }
+  }
 })); 

@@ -3,11 +3,8 @@ import "@/app/globals.css";
 import dynamic from 'next/dynamic';
 
 export const metadata: Metadata = {
-  title: "Sun Lah",
-  description: "Art",
-  icons: {
-		icon: "/favicon.png",
-	},
+  title: "7 billion project",
+  description: "Sun Lah",
 };
 
 const AudioPlayer = dynamic(

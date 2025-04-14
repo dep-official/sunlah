@@ -9,24 +9,19 @@ import type { QRParams } from '@/features/audio-player/types';
 // 현재 코드에서 useSearchParams를 사용하는 부분을 분리한 컴포넌트
 function ProjectContent() {
   const searchParams = useSearchParams();
-  const { playAudioById, activeArtists, initializeAudio } = useAudioStore();
+  const { addNewAudio, activeArtists, hasInteracted } = useAudioStore();
 
   const qrParams: QRParams = {
     id: searchParams.get('id') || '',
     lang: (searchParams.get('lang') as 'kr' | 'en') || 'kr'
   };
 
-  // 초기화를 위한 useEffect
-  useEffect(() => {
-    initializeAudio();
-  }, [initializeAudio]);
-
-  // 오디오 재생을 위한 별도의 useEffect
+  // URL의 id가 변경될 때마다 처리
   useEffect(() => {
     if (qrParams.id) {
-      playAudioById(qrParams.id);
+      addNewAudio(qrParams.id);
     }
-  }, [qrParams.id, playAudioById]);
+  }, [qrParams.id]);
 
   return (
     <div className="w-full pt-40 max-w-[430px] mx-auto bg-white text-[#222] p-4 font-nicholas">
@@ -41,8 +36,8 @@ function ProjectContent() {
         {activeArtists.length > 0 && (
           <div className="space-y-2">
             {activeArtists.map((artist, index) => (
-              <div key={index}>
-                {index !== 0 && <p>*</p>}
+              <div key={`${artist.audioId}-${index}`}>
+                {index !== 0 && <p className="text-xl">+</p>}
                 <p className="mt-1 text-xl">{artist.name}</p>
               </div>
             ))}

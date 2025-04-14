@@ -18,9 +18,22 @@ export function MenuItem({ item }: MenuItemProps) {
     pathname.includes(child.path.replace('/', ''))
   );
 
+  // pathname에 'works'가 포함되어 있는지 확인
+  const isWorksPage = pathname.includes('works');
+
   useEffect(() => {
-    setIsOpen(false);
-  }, [pathname]);
+    // works 페이지가 아닐 때만 메뉴를 닫음
+    if (!isWorksPage) {
+      setIsOpen(false);
+    }
+  }, [pathname, isWorksPage]);
+
+  // works 페이지일 때는 항상 메뉴가 열리도록 설정
+  useEffect(() => {
+    if (isWorksPage && item.children) {
+      setIsOpen(true);
+    }
+  }, [isWorksPage, item.children]);
 
   if (item.children) {
     return (
@@ -33,7 +46,8 @@ export function MenuItem({ item }: MenuItemProps) {
         >
           {item.label}
         </button>
-        {isOpen && (
+        {/* isWorksPage가 true이거나 isOpen이 true일 때 하위메뉴 표시 */}
+        {(isWorksPage || isOpen) && (
           <ul className='absolute ml-20 lg:ml-32 '>
             {item.children.map((child) => (
               <li key={child.path}>
