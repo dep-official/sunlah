@@ -31,7 +31,7 @@ function ProjectContent() {
   return (
     <div className="relative w-full max-w-[430px] mx-auto bg-white text-[#222] p-4 font-nicholas">
       <div className="text-center">
-        <h1 className="text-3xl">
+        <h1 className="text-3xl" id='test'>
           7 Billion Project
         </h1> 
         <p className="mt-1 text-2xl italic">- Skin and Flesh -</p>

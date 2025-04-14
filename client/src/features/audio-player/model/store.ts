@@ -111,15 +111,48 @@ if (typeof window !== 'undefined') {
   } else {
     console.log('Existing tab:', existingTabId);
 
+    const testElement = document.getElementById('test');
+        if (testElement) {
+          testElement.innerHTML = `
+          unload-2<br/>
+            Tab ID: ${currentTabId}<br>
+            Stored ID: ${storedTabId}<br>
+            Time: ${new Date().toLocaleTimeString()}<br>
+            Storage Cleared
+          `;
+        }
+    
     window.addEventListener('unload', ()=> {
       if(currentTabId == storedTabId) {
         Object.values(STORAGE_KEYS).forEach(key => {
           localStorage.removeItem(key);
         });
+        const testElement = document.getElementById('test');
+        if (testElement) {
+          testElement.innerHTML = `
+            unload-1<br/>
+            Tab ID: ${currentTabId}<br>
+            Stored ID: ${storedTabId}<br>
+            Time: ${new Date().toLocaleTimeString()}<br>
+            Storage Cleared
+          `;
+        }
       } 
     })
   }
 
+  window.addEventListener('unload', ()=> {
+    const testElement = document.getElementById('test');
+    if (testElement) {
+      testElement.innerHTML = `
+        unload-4<br/>
+        Tab ID: ${currentTabId}<br>
+        Stored ID: ${storedTabId}<br>
+        Time: ${new Date().toLocaleTimeString()}<br>
+        Storage Cleared
+      `;
+    }
+  })
  
 }
 
