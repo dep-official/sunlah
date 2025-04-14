@@ -9,14 +9,19 @@ import type { QRParams } from '@/features/audio-player/types';
 // 현재 코드에서 useSearchParams를 사용하는 부분을 분리한 컴포넌트
 function ProjectContent() {
   const searchParams = useSearchParams();
-  const { addNewAudio, activeArtists, hasInteracted } = useAudioStore();
+  const { addNewAudio, initializeAudio, activeArtists } = useAudioStore();
 
   const qrParams: QRParams = {
     id: searchParams.get('id') || '',
     lang: (searchParams.get('lang') as 'kr' | 'en') || 'kr'
   };
 
-  // URL의 id가 변경될 때마다 처리
+  // 컴포넌트 마운트 시 저장된 오디오 초기화
+  useEffect(() => {
+    initializeAudio();
+  }, []);
+
+  // URL의 id가 변경될 때마다 새 오디오 추가
   useEffect(() => {
     if (qrParams.id) {
       addNewAudio(qrParams.id);
@@ -52,7 +57,7 @@ function ProjectContent() {
 // 메인 페이지 컴포넌트
 export default function BillionProjectPage() {
   return (
-    <Suspense fallback={<div></div>}>
+    <Suspense fallback={<div>Loading...</div>}>
       <ProjectContent />
     </Suspense>
   );
