@@ -109,12 +109,15 @@ if (typeof window !== 'undefined') {
     const currentTabId = sessionStorage.getItem(STORAGE_KEYS.CURRENT_TAB);
     const storedTabId = localStorage.getItem(STORAGE_KEYS.CURRENT_TAB);
 
-    if (currentTabId === storedTabId) {
-      console.log('Closing last active tab, clearing localStorage');
-      Object.values(STORAGE_KEYS).forEach(key => {
-        localStorage.removeItem(key);
-      });
-    } 
+
+    window.addEventListener('unload', ()=> {
+      if(currentTabId == storedTabId) {
+        console.log('Closing last active tab, clearing localStorage');
+        Object.values(STORAGE_KEYS).forEach(key => {
+          localStorage.removeItem(key);
+        });
+      } 
+    })
   } else {
     console.log('Existing tab:', existingTabId);
   }
