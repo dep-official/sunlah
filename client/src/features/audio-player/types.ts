@@ -18,11 +18,17 @@ export interface Artist {
 
 export interface AudioStore {
   activeAudios: Record<string, HTMLAudioElement>;
-  activeArtists: Artist[];
+  activeArtists: Array<{
+    name: string;
+    audioId: string;
+  }>;
   playedAudios: string[];
   hasInteracted: boolean;
   audioConfigs: AudioConfig[];
+  currentAudio: string | null;
+  isPlaying: boolean;
   initializeAudio: () => void;
   addNewAudio: (id: string) => Promise<void>;
   setHasInteracted: () => void;
+  playAudio: (id: string) => void;
 } 

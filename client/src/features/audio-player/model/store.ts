@@ -96,29 +96,32 @@ export const STORAGE_KEYS = {
   HAS_INTERACTED: 'hasInteracted',
 };
 
-
-
 export const useAudioStore = create<AudioStore>((set, get) => ({
   activeAudios: {},
   activeArtists: [],
   playedAudios: [],
   hasInteracted: false,
   audioConfigs,
+  currentAudio: null,
+  isPlaying: false,
+
+  playAudio: (id: string) => {
+    set({ 
+      isPlaying: true,
+      currentAudio: id,
+      playedAudios: [...get().playedAudios, id]
+    });
+  },
 
   setHasInteracted: () => {
     set({ hasInteracted: true });
-    
-    // localStorage에 상호작용 상태 저장
     localStorage.setItem(STORAGE_KEYS.HAS_INTERACTED, 'true');
 
-    // 모든 저장된 오디오 재생 시도
     const { activeAudios } = get();
     Object.values(activeAudios).forEach(async (audio) => {
       try {
-        // 오디오 요소 초기화
         audio.muted = true;
         await audio.play();
-        // 재생이 시작되면 음소거 해제
         audio.muted = false;
       } catch (error) {
         console.error('Failed to play audio:', error);
@@ -128,13 +131,13 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
 
   initializeAudio: () => {
     try {
-      // localStorage에서 상태 복원
-      const savedHasInteracted = localStorage.getItem(STORAGE_KEYS.HAS_INTERACTED);
       const savedAudios = localStorage.getItem(STORAGE_KEYS.PLAYED_AUDIOS);
       const savedArtists = localStorage.getItem(STORAGE_KEYS.ACTIVE_ARTISTS);
+      const savedHasInteracted = localStorage.getItem(STORAGE_KEYS.HAS_INTERACTED) === 'true';
 
-      // hasInteracted 상태는 localStorage에서 가져오지 않고 항상 false로 시작
-      set({ hasInteracted: false });
+      if (savedHasInteracted) {
+        set({ hasInteracted: true });
+      }
 
       if (savedAudios) {
         const savedIds = JSON.parse(savedAudios);
@@ -145,7 +148,6 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
           set({ activeArtists: artists });
         }
 
-        // 각 오디오 초기화
         savedIds.forEach((id: string) => {
           const config = get().audioConfigs.find(cfg => cfg.id === id);
           if (config) {
@@ -153,11 +155,16 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
             audio.src = config.src;
             audio.loop = true;
             audio.preload = 'auto';
-            audio.muted = true; // 초기에는 음소거 상태로 설정
 
             set(state => ({
               activeAudios: { ...state.activeAudios, [id]: audio }
             }));
+
+            if (get().hasInteracted) {
+              audio.play().then(() => {
+                audio.muted = false;
+              }).catch(console.error);
+            }
           }
         });
       }
@@ -191,20 +198,20 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
         audioId: id
       };
 
-      const updatedArtists = [...activeArtists, artistInfo];
-      const updatedPlayedAudios = [...new Set([...playedAudios, id])];
-
       set({
         activeAudios: { ...activeAudios, [id]: audio },
-        activeArtists: updatedArtists,
-        playedAudios: updatedPlayedAudios
+        activeArtists: [...activeArtists, artistInfo],
+        playedAudios: [...new Set([...playedAudios, id])],
+        currentAudio: id,
+        isPlaying: true
       });
 
-      localStorage.setItem(STORAGE_KEYS.ACTIVE_ARTISTS, JSON.stringify(updatedArtists));
-      localStorage.setItem(STORAGE_KEYS.PLAYED_AUDIOS, JSON.stringify(updatedPlayedAudios));
+      localStorage.setItem(STORAGE_KEYS.ACTIVE_ARTISTS, JSON.stringify([...activeArtists, artistInfo]));
+      localStorage.setItem(STORAGE_KEYS.PLAYED_AUDIOS, JSON.stringify([...new Set([...playedAudios, id])]));
 
       if (hasInteracted) {
         try {
+          audio.muted = true;
           await audio.play();
           audio.muted = false;
         } catch (error) {

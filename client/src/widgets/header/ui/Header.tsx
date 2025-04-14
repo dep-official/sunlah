@@ -14,7 +14,7 @@ export function Header() {
       <header className="flex items-start justify-between mb-12">
         <p className="text-2xl">
           <Link href="/">
-            <Image src="/logo.svg" alt="Sun Lah" className='lg:w-16 lg:h-16' width={64} height={64} />
+            <Image src="/logo.svg" alt="Sun Lah" className='w-16 h-16' width={64} height={64} />
           </Link>
         </p>
         <div className="gap-1 lg:gap-2 text-sm flex font-verdana  [&>*]:text-[12px] [&>*]:leading-[25px]">
