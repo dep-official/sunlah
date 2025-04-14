@@ -108,6 +108,9 @@ if (typeof window !== 'undefined') {
     localStorage.setItem(STORAGE_KEYS.CURRENT_TAB, newTabId);
     console.log('New tab created:', newTabId);
 
+  } else {
+    console.log('Existing tab:', existingTabId);
+
     window.addEventListener('unload', ()=> {
       if(currentTabId == storedTabId) {
         Object.values(STORAGE_KEYS).forEach(key => {
@@ -115,9 +118,6 @@ if (typeof window !== 'undefined') {
         });
       } 
     })
-    
-  } else {
-    console.log('Existing tab:', existingTabId);
   }
 
  
