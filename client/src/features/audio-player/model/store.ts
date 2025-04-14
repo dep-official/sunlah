@@ -99,61 +99,29 @@ export const STORAGE_KEYS = {
 
 if (typeof window !== 'undefined') {
   const existingTabId = sessionStorage.getItem(STORAGE_KEYS.CURRENT_TAB);
-  const currentTabId = sessionStorage.getItem(STORAGE_KEYS.CURRENT_TAB);
-  const storedTabId = localStorage.getItem(STORAGE_KEYS.CURRENT_TAB);
-
+  
   if (!existingTabId) {
     const newTabId = Math.random().toString(36).substring(2, 9);
     sessionStorage.setItem(STORAGE_KEYS.CURRENT_TAB, newTabId);
     localStorage.setItem(STORAGE_KEYS.CURRENT_TAB, newTabId);
     console.log('New tab created:', newTabId);
-
   } else {
     console.log('Existing tab:', existingTabId);
-
-    const testElement = document.getElementById('test');
-        if (testElement) {
-          testElement.innerHTML = `
-          unload-2<br/>
-            Tab ID: ${currentTabId}<br>
-            Stored ID: ${storedTabId}<br>
-            Time: ${new Date().toLocaleTimeString()}<br>
-            Storage Cleared
-          `;
-        }
-    
-    window.addEventListener('unload', ()=> {
-      if(currentTabId == storedTabId) {
-        Object.values(STORAGE_KEYS).forEach(key => {
-          localStorage.removeItem(key);
-        });
-        const testElement = document.getElementById('test');
-        if (testElement) {
-          testElement.innerHTML = `
-            unload-1<br/>
-            Tab ID: ${currentTabId}<br>
-            Stored ID: ${storedTabId}<br>
-            Time: ${new Date().toLocaleTimeString()}<br>
-            Storage Cleared
-          `;
-        }
-      } 
-    })
   }
 
-  window.addEventListener('unload', ()=> {
-    const testElement = document.getElementById('test');
-    if (testElement) {
-      testElement.innerHTML = `
-        unload-4<br/>
-        Tab ID: ${currentTabId}<br>
-        Stored ID: ${storedTabId}<br>
-        Time: ${new Date().toLocaleTimeString()}<br>
-        Storage Cleared
-      `;
+  window.addEventListener('unload', () => {
+    const currentTabId = sessionStorage.getItem(STORAGE_KEYS.CURRENT_TAB);
+    const storedTabId = localStorage.getItem(STORAGE_KEYS.CURRENT_TAB);
+    
+    if (currentTabId === storedTabId) {
+      console.log('Clearing localStorage - Last tab closing');
+      Object.values(STORAGE_KEYS).forEach(key => {
+        localStorage.removeItem(key);
+      });
+    } else {
+      console.log('Tab closing but not clearing localStorage');
     }
-  })
- 
+  });
 }
 
 export const useAudioStore = create<AudioStore>((set, get) => ({
