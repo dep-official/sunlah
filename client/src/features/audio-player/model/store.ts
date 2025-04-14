@@ -111,12 +111,20 @@ if (typeof window !== 'undefined') {
 
 
     window.addEventListener('unload', ()=> {
+      Object.values(STORAGE_KEYS).forEach(key => {
+        localStorage.removeItem(key);
+      });
       if(currentTabId == storedTabId) {
-        console.log('Closing last active tab, clearing localStorage');
-        Object.values(STORAGE_KEYS).forEach(key => {
-          localStorage.removeItem(key);
-        });
-      } 
+        // Object.values(STORAGE_KEYS).forEach(key => {
+        //   localStorage.removeItem(key);
+        // });
+        alert('1');
+      } else {
+        // Object.values(STORAGE_KEYS).forEach(key => {
+        //   localStorage.removeItem(key);
+        // });
+        alert('2');
+      }
     })
   } else {
     console.log('Existing tab:', existingTabId);
