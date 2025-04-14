@@ -94,7 +94,31 @@ export const STORAGE_KEYS = {
   PLAYED_AUDIOS: 'playedAudios',
   ACTIVE_ARTISTS: 'activeArtists',
   HAS_INTERACTED: 'hasInteracted',
+  CURRENT_TAB: 'currentTab'
 };
+
+if (typeof window !== 'undefined') {
+  const existingTabId = sessionStorage.getItem(STORAGE_KEYS.CURRENT_TAB);
+  
+  if (!existingTabId) {
+    const newTabId = Math.random().toString(36).substring(2, 9);
+    sessionStorage.setItem(STORAGE_KEYS.CURRENT_TAB, newTabId);
+    localStorage.setItem(STORAGE_KEYS.CURRENT_TAB, newTabId);
+    console.log('New tab created:', newTabId);
+
+    const currentTabId = sessionStorage.getItem(STORAGE_KEYS.CURRENT_TAB);
+    const storedTabId = localStorage.getItem(STORAGE_KEYS.CURRENT_TAB);
+
+    if (currentTabId === storedTabId) {
+      console.log('Closing last active tab, clearing localStorage');
+      Object.values(STORAGE_KEYS).forEach(key => {
+        localStorage.removeItem(key);
+      });
+    } 
+  } else {
+    console.log('Existing tab:', existingTabId);
+  }
+}
 
 export const useAudioStore = create<AudioStore>((set, get) => ({
   activeAudios: {},
@@ -198,16 +222,22 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
         audioId: id
       };
 
+      const storedPlayedAudios = JSON.parse(localStorage.getItem(STORAGE_KEYS.PLAYED_AUDIOS) || '[]');
+      const storedActiveArtists = JSON.parse(localStorage.getItem(STORAGE_KEYS.ACTIVE_ARTISTS) || '[]');
+
+      const updatedPlayedAudios = [...new Set([...storedPlayedAudios, ...playedAudios, id])];
+      const updatedArtists = [...storedActiveArtists, artistInfo];
+
       set({
         activeAudios: { ...activeAudios, [id]: audio },
-        activeArtists: [...activeArtists, artistInfo],
-        playedAudios: [...new Set([...playedAudios, id])],
+        activeArtists: updatedArtists,
+        playedAudios: updatedPlayedAudios,
         currentAudio: id,
         isPlaying: true
       });
 
-      localStorage.setItem(STORAGE_KEYS.ACTIVE_ARTISTS, JSON.stringify([...activeArtists, artistInfo]));
-      localStorage.setItem(STORAGE_KEYS.PLAYED_AUDIOS, JSON.stringify([...new Set([...playedAudios, id])]));
+      localStorage.setItem(STORAGE_KEYS.ACTIVE_ARTISTS, JSON.stringify(updatedArtists));
+      localStorage.setItem(STORAGE_KEYS.PLAYED_AUDIOS, JSON.stringify(updatedPlayedAudios));
 
       if (hasInteracted) {
         try {
