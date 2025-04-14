@@ -99,36 +99,26 @@ export const STORAGE_KEYS = {
 
 if (typeof window !== 'undefined') {
   const existingTabId = sessionStorage.getItem(STORAGE_KEYS.CURRENT_TAB);
-  
+  const currentTabId = sessionStorage.getItem(STORAGE_KEYS.CURRENT_TAB);
+  const storedTabId = localStorage.getItem(STORAGE_KEYS.CURRENT_TAB);
+
   if (!existingTabId) {
     const newTabId = Math.random().toString(36).substring(2, 9);
     sessionStorage.setItem(STORAGE_KEYS.CURRENT_TAB, newTabId);
     localStorage.setItem(STORAGE_KEYS.CURRENT_TAB, newTabId);
     console.log('New tab created:', newTabId);
-
-    const currentTabId = sessionStorage.getItem(STORAGE_KEYS.CURRENT_TAB);
-    const storedTabId = localStorage.getItem(STORAGE_KEYS.CURRENT_TAB);
-
-
-    window.addEventListener('unload', ()=> {
-      Object.values(STORAGE_KEYS).forEach(key => {
-        localStorage.removeItem(key);
-      });
-      if(currentTabId == storedTabId) {
-        // Object.values(STORAGE_KEYS).forEach(key => {
-        //   localStorage.removeItem(key);
-        // });
-        alert('1');
-      } else {
-        // Object.values(STORAGE_KEYS).forEach(key => {
-        //   localStorage.removeItem(key);
-        // });
-        alert('2');
-      }
-    })
+    
   } else {
     console.log('Existing tab:', existingTabId);
   }
+
+  window.addEventListener('unload', ()=> {
+    if(currentTabId == storedTabId) {
+      Object.values(STORAGE_KEYS).forEach(key => {
+        localStorage.removeItem(key);
+      });
+    } 
+  })
 }
 
 export const useAudioStore = create<AudioStore>((set, get) => ({
