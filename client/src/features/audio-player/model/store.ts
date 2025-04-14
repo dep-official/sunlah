@@ -107,18 +107,20 @@ if (typeof window !== 'undefined') {
     sessionStorage.setItem(STORAGE_KEYS.CURRENT_TAB, newTabId);
     localStorage.setItem(STORAGE_KEYS.CURRENT_TAB, newTabId);
     console.log('New tab created:', newTabId);
+
+    window.addEventListener('unload', ()=> {
+      if(currentTabId == storedTabId) {
+        Object.values(STORAGE_KEYS).forEach(key => {
+          localStorage.removeItem(key);
+        });
+      } 
+    })
     
   } else {
     console.log('Existing tab:', existingTabId);
   }
 
-  window.addEventListener('unload', ()=> {
-    if(currentTabId == storedTabId) {
-      Object.values(STORAGE_KEYS).forEach(key => {
-        localStorage.removeItem(key);
-      });
-    } 
-  })
+ 
 }
 
 export const useAudioStore = create<AudioStore>((set, get) => ({
