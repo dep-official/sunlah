@@ -29,7 +29,7 @@ function ProjectContent() {
   }, [qrParams.id]);
 
   return (
-    <div className="w-full pt-40 max-w-[430px] mx-auto bg-white text-[#222] p-4 font-nicholas">
+    <div className="relative w-full max-w-[430px] mx-auto bg-white text-[#222] p-4 font-nicholas">
       <div className="text-center">
         <h1 className="text-3xl">
           7 Billion Project
@@ -42,7 +42,7 @@ function ProjectContent() {
           <div className="space-y-2">
             {activeArtists.map((artist, index) => (
               <div key={`${artist.audioId}-${index}`}>
-                {index !== 0 && <p className="text-xl">+</p>}
+                {index !== 0 && <p className="text-xl">*</p>}
                 <p className="mt-1 text-xl">{artist.name}</p>
               </div>
             ))}

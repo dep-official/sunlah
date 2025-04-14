@@ -17,7 +17,7 @@ export function Header() {
             <Image src="/logo.svg" alt="Sun Lah" className='lg:w-16 lg:h-16' width={64} height={64} />
           </Link>
         </p>
-        <div className="gap-1 lg:gap-2 text-sm flex font-verdana  [&>*]:lg:text-[12px] [&>*]:lg:leading-[25px]">
+        <div className="gap-1 lg:gap-2 text-sm flex font-verdana  [&>*]:text-[12px] [&>*]:leading-[25px]">
           <button 
             onClick={() => setLanguage('ko')}
             className={language === 'ko' ? 'font-bold' : ''}
@@ -34,7 +34,7 @@ export function Header() {
         </div>
       </header>
 
-      <nav className='font-verdana lg:text-[12px] lg:leading-[25px]'>
+      <nav className='font-verdana text-[12px] leading-[25px]'>
         <ul className='flex flex-col'>
           {menuItems.map((item) => (
             <MenuItem key={item.path} item={item} />
