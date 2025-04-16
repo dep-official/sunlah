@@ -29,15 +29,15 @@ function ProjectContent() {
   }, [qrParams.id]);
 
   return (
-    <div className="relative w-full max-w-[430px] mx-auto bg-white text-[#222] p-4 font-nicholas">
+    <div className="relative w-full max-w-[430px] mx-auto bg-white text-[#222] p-4 font-verdana">
       <div className="text-center">
-        <h1 className="text-3xl" id='test'>
+        <h1 className="text-2xl" id='test'>
           7 Billion Project
         </h1> 
-        <p className="mt-1 text-2xl italic">- Skin and Flesh -</p>
-        <p className='mt-3 text-2xl'>Sun Lah</p>
+        <p className="mt-1 text-xl italic">- Skin and Flesh -</p>
+        <p className='mt-3 text-xl'>Sun Lah</p>
         
-        <p className="mt-20 mb-4 text-3xl">You are listening to</p>
+        <p className="mt-20 mb-4 text-2xl">You are listening to</p>
         {activeArtists.length > 0 && (
           <div className="space-y-2">
             {activeArtists.map((artist, index) => (
